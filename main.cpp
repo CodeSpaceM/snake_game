@@ -68,7 +68,7 @@ class SnakeLogic {
                 case 'w': case 'W': snake.set_face(Snake::NORTH); break;
                 case 'X': snake.is_alive = 0; break; // Stop Game
                 default: break;
-                }
+                }break;
             }
             waited_MS += input_wait_MS;
             Sleep(input_wait_MS); // wait for next keyboard hit
@@ -96,19 +96,18 @@ class SnakeLogic {
     void update() {
         int next_head = snake.next_head();
 
-        if (snake.having(next_head)) 
-        { 
-            snake.is_alive = 0; 
+        if (snake.having(next_head) && *(snake.cells.begin()) != next_head)
+        {
+            snake.is_alive = 0;
         } // die on collision
-        else 
+        else
         { // if there's a food, keep the tail, else cut tail
-            if (next_head == food_cell) 
-            {
+            if (next_head == food_cell) {
                 generate_food(); score++; // make new food & increase score
             }
-            else 
-            { 
-                snake.cells.erase(snake.cells.begin()); 
+            else
+            {
+                snake.cells.erase(snake.cells.begin());
             }
             snake.cells.push_back(next_head); // move ahead
         }
@@ -116,7 +115,7 @@ class SnakeLogic {
 
     void re_draw() {
 
-        system("cls");
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0,0 });
 
         cout << "SNAKE CPP. Controls: A-left, S-down, D-right, W-up" << endl;
         int field_cell = 0, width = snake.max_x;
@@ -166,6 +165,14 @@ public:
 };
 
 int main(int argc, const char* argv[]) {
+    
+    CONSOLE_CURSOR_INFO CURSOR;
+
+    CURSOR.bVisible = FALSE;
+    CURSOR.dwSize = 1;
+
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CURSOR);
+
     SnakeLogic game(Snake(20, 20));
     game.setup(100); // Delay 100ms
     game.loop();
